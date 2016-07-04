@@ -140,16 +140,12 @@ class Grafo(object):
         padre = {}
         orden = {}
         cola = []
-
-        salida = []
-
         cola.append(inicio)
         visitados.append(inicio)
         padre[inicio] = None
         orden[inicio] = 0
         while len(cola) != 0:
             v = cola.pop(0)
-            print(v)
             visitar(v, padre, orden, extra)
             for w in self.adyacentes(v):
                 if w not in visitados:
@@ -157,8 +153,7 @@ class Grafo(object):
                     padre[w] = v
                     orden[w] = orden[v] + 1
                     cola.append(w)
-            salida.append(v)        
-        return (padre,orden,salida)
+        return (padre,orden)
 
 
     def dfs(self, visitar = visitar_nulo, extra = None, inicio=None):
@@ -182,14 +177,12 @@ class Grafo(object):
         padre = {}
         orden = {}
         pila = []
-        salida = []
         pila.append(inicio)
         visitados.append(inicio)
         padre[inicio] = None
         orden[inicio] = 0
         while len(pila) != 0:
             v = pila.pop()
-            print(v)
             visitar(v, padre, orden, extra)
             for w in self.adyacentes(v):
                 if w not in visitados:
@@ -197,8 +190,8 @@ class Grafo(object):
                     padre[w] = v
                     orden[w] = orden[v] + 1
                     pila.append(w)
-            salida.append(v)
-        return (padre,orden, salida)    
+        return (padre,orden)    
+
 
     def componentes_conexas(self):
         '''Devuelve una lista de listas con componentes conexas. Cada componente conexa es representada con una lista, con los identificadores de sus vertices.
@@ -239,6 +232,8 @@ class Grafo(object):
             - Listado de vertices (identificadores) ordenado con el recorrido, incluyendo a los vertices de origen y destino. 
             En caso que no exista camino entre el origen y el destino, se devuelve None. 
         '''
+        if not origen in self.grafo or not destino in self.grafo:
+            raise KeyError()
         q = []
         heap = heapq
         heap.heappush(q, (origen, 0))
@@ -258,6 +253,7 @@ class Grafo(object):
         recorrido.append(destino)
         anterior = destino
         while recorrido[0] != origen:
+            if not anterior in vuelta: return None
             recorrido.insert(0, vuelta[anterior])
             anterior = vuelta[anterior]
         return recorrido
@@ -299,7 +295,7 @@ class Grafo(object):
 
 
 if __name__ == '__main__':
-    g = Grafo()
+    g = Grafo(True)
     g["a"] = "a"
     g["b"] = "b"
     g["c"] = "c"
@@ -322,10 +318,13 @@ if __name__ == '__main__':
 
 
     print(g.grafo)
-    print("cconexas:")
-    print(g.componentes_conexas())
-    print("prim:")
-    print(g.mst().grafo)
+    #print("cconexas:")
+    #print(g.componentes_conexas())
+    (padre, orden) = g.bfs(inicio = "a")
+    print("padre:", padre)
+    print("orden:", orden)
+    #print("prim:")
+    #print(g.mst().grafo)
     '''g = Grafo()
     g[1] = 1
     g[2] = 2
